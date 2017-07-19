@@ -1,0 +1,117 @@
+---
+  - hosts: all
+    become: true
+    tasks:
+    - name: add erlang repo
+      yum_repository:
+        name: erlang
+        description: erlang stuff
+        file: external_repos
+        baseurl: https://packages.erlang-solutions.com/rpm/centos/$releasever/$basearch
+        gpgkey: https://packages.erlang-solutions.com/rpm/erlang_solutions.asc
+        gpgcheck: yes
+        enabled: yes   
+    - name: add sensu-core repo
+      yum_repository:
+        name: sensu-core
+        description: sensu oss
+        file: external_repos
+        baseurl: https://sensu.global.ssl.fastly.net/yum/$releasever/$basearch/
+        gpgcheck: no
+        enabled: yes   
+    - rpm_key: 
+         state: present
+         key: https://www.rabbitmq.com/rabbitmq-signing-key-public.asc
+    - name: install stuff from repos
+      yum:
+        name: "{{ item }}"
+        state: latest
+      with_items:
+        - vim
+        - socat
+        - redis
+        - erlang
+    - name: install stuff from rpm
+      yum:
+        name: https://www.rabbitmq.com/releases/rabbitmq-server/v3.6.10/rabbitmq-server-3.6.10-1.el7.noarch.rpm
+        state: present
+    - file: 
+        path: /etc/sensu/conf.d
+        state: directory
+    - name: create redis configuration 
+      copy:
+        src: conf/redis.json
+        dest: /etc/sensu/conf.d/redis.json
+        mode: 0644
+    - name: create rabbitmq configuration 
+      copy:
+        src: conf/rabbitmq.json
+        dest: /etc/sensu/conf.d/rabbitmq.json
+        mode: 0644
+    - name: copy client json
+      copy:
+        src: conf/client.json
+        dest: /etc/sensu/conf.d/client.json
+        mode: 0644
+    - name: copy transport json
+      copy:
+        src: conf/transport.json
+        dest: /etc/sensu/conf.d/transport.json
+        mode: 0644
+    - name: copy api json
+      copy:
+        src: conf/api.json
+        dest: /etc/sensu/conf.d/api.json
+        mode: 0644
+    - name: copy dashboard json
+      copy:
+        src: conf/uchiwa.json
+        dest: /etc/sensu/conf.d/uchiwa.json
+        mode: 0644
+    - name: copy dashboard json
+      copy:
+        src: conf/config.json
+        dest: /etc/sensu/config.json
+        mode: 0644
+
+    - name: start redis
+      service:
+        name: redis
+        state: started
+    - name: rabbit mq start
+      service:
+        name: rabbitmq-server
+        state: started
+    - name: setup rabbit mq
+      shell: rabbitmqctl add_vhost /sensu
+    - name: setup rabbit mq
+      shell: rabbitmqctl add_user sensu secret
+    - name: setup rabbit mq
+      shell: rabbitmqctl set_permissions -p /sensu sensu ".*" ".*" ".*"
+    - name: install sensu packages
+      yum:
+        name: "{{ item }}"
+        state: latest
+      with_items:
+        - sensu
+        - uchiwa
+    - name: start the sensu services
+      service: 
+        name: sensu-api
+        state: started
+    - name: start the sensu services
+      service: 
+        name: sensu-api
+        state: started
+    - name: start the sensu services
+      service: 
+        name: sensu-server
+        state: started
+    - name: start the sensu services
+      service: 
+        name: sensu-client
+        state: started
+    - name: start the sensu services
+      service: 
+        name: uchiwa
+        state: started
