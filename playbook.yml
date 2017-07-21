@@ -31,11 +31,12 @@
         - socat
         - redis
         - erlang
+        - gcc
+        - gcc-c++
     - name: install stuff from rpm
       yum:
         name: https://www.rabbitmq.com/releases/rabbitmq-server/v3.6.10/rabbitmq-server-3.6.10-1.el7.noarch.rpm
         state: present
-
     - name: start redis
       service:
         name: redis
@@ -98,6 +99,11 @@
         src: conf/config.json
         dest: /etc/sensu/config.json
         mode: 0644
+    - name: copy checks json
+      copy:
+        src: conf/checks.json
+        dest: /etc/sensu/conf.d/checks.json
+        mode: 0644
     - name: start the sensu services
       service: 
         name: sensu-api
@@ -118,3 +124,5 @@
       service: 
         name: uchiwa
         state: started
+    - name: Run the command if the specified file does not exist.
+      command: sensu-install -p http

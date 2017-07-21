@@ -1,0 +1,20 @@
+{
+  "checks": {
+    "cron": {
+      "command": "exit 2",
+      "subscribers": [
+        "rhel"
+      ],
+      "interval": 60,
+      "standalone": true
+    },
+    "ssl cert check": {
+      "command": "/opt/sensu/embedded/bin/ruby check_cert.rb -w 9999999 -u https://www.stockport.gov.uk",
+      "subscribers": [
+        "rhel"
+      ],
+      "interval": 60,
+      "standalone": true
+    }
+  }
+}
