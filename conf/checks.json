@@ -1,7 +1,7 @@
 {
   "checks": {
-    "cron": {
-      "command": "exit 2",
+    "website": {
+      "command": "/opt/sensu/embedded/bin/ruby embedded/bin/check-http.rb -u https://www.sausagesausagesausgesausagesausage.com",
       "subscribers": [
         "rhel"
       ],
@@ -9,7 +9,7 @@
       "standalone": true
     },
     "ssl cert check": {
-      "command": "/opt/sensu/embedded/bin/ruby check_cert.rb -w 9999999 -u https://www.stockport.gov.uk",
+      "command": "/opt/sensu/embedded/bin/ruby embedded/bin/check-https-cert.rb -w 9999999 -u https://www.stockport.gov.uk",
       "subscribers": [
         "rhel"
       ],
