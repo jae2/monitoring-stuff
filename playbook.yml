@@ -124,5 +124,7 @@
       service: 
         name: uchiwa
         state: started
-    - name: Run the command if the specified file does not exist.
+    - name: Install http check plugins for sensu
       command: sensu-install -p http
+    - name: Install disk checks for sensu
+      command: sensu-install -p disk-checks
