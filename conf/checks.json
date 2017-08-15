@@ -8,15 +8,15 @@
       "interval": 60,
       "standalone": true
     },
-    "ssl cert check": {
+    "sslcertcheck": {
       "command": "/opt/sensu/embedded/bin/ruby embedded/bin/check-https-cert.rb -w 9999999 -u https://www.stockport.gov.uk",
       "subscribers": [
         "rhel"
       ],
       "interval": 60,
       "standalone": true
-    }
-    "disk usuage check": {
+    },
+    "diskusuagecheck": {
       "command": "/opt/sensu/embedded/bin/ruby embedded/bin/check-disk-usage.rb -c 20",
       "subscribers": [
         "rhel"
